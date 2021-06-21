@@ -1,0 +1,124 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on gmetal&#39;s dev blog</title>
+        <link>https://gmetal.dev/posts/</link>
+        <description>Recent content in Posts on gmetal&#39;s dev blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+        <lastBuildDate>Mon, 21 Jun 2021 06:00:00 +0000</lastBuildDate>
+        <atom:link href="https://gmetal.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Adding documentation to a kotlin project with Dokka </title>
+            <link>https://gmetal.dev/posts/add-documentation-with-dokka/</link>
+            <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+            
+            <guid>https://gmetal.dev/posts/add-documentation-with-dokka/</guid>
+            <description>Library by Geoff Coupe, licensed under CC BY-NC-SA 2.0
+  Dokka is for kotlin what Javadoc is for Java. It converts your KDoc-styled comments into a variety of document format such as HTML, Markdown (Github and Jekyll forms) and Javadoc HTML.
+How to add dokka to your gradle project Adding dokka to your Gradle project is very easy, as discussed in their documentation. You just add the dokka plugin to the plugins block of your module&amp;rsquo;s build gradle (not the root build.</description>
+            <content type="html"><![CDATA[<figure>
+    <img src="/images/20972113_ce388e201e_b.jpg"/> <figcaption>
+            <p>
+                    <a href="https://www.flickr.com/photos/67951361@N00/20972113">Library by Geoff Coupe, licensed under CC BY-NC-SA 2.0</a></p>
+        </figcaption>
+</figure>
+
+<p><a href="https://kotlin.github.io/dokka/1.5/">Dokka</a> is for kotlin what <a href="https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html">Javadoc</a> is for Java. It converts your <a href="https://kotlinlang.org/docs/kotlin-doc.html">KDoc-styled comments</a> into a variety of document format such as HTML, Markdown (Github and Jekyll forms) and Javadoc HTML.</p>
+<h2 id="how-to-add-dokka-to-your-gradle-project">How to add dokka to your gradle project</h2>
+<p>Adding dokka to your Gradle project is very easy, as discussed <a href="https://kotlin.github.io/dokka/1.5/user_guide/gradle/usage/">in their documentation</a>. You just add the dokka plugin to the plugins block of your <strong>module&rsquo;s build gradle</strong> (not the root build.gradle file):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">plugins <span style="color:#f92672">{</span>
+    id <span style="color:#e6db74">&#34;com.android.library&#34;</span>
+    id <span style="color:#e6db74">&#34;kotlin-android&#34;</span>
+    id <span style="color:#e6db74">&#34;org.jetbrains.dokka&#34;</span> version <span style="color:#e6db74">&#34;1.4.32&#34;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>and that&rsquo;s about it. The plugin will create several dokka-prefixed gradle tasks, each of which is responsible for generating the documentation in each of the supported formats.</p>
+<h2 id="customising-the-dokka-configuration">Customising the dokka configuration</h2>
+<p>You can tweak the configuration of each documentation task by adding the corresponding dokka-prefixed block in your module&rsquo;s <code>build.gradle</code> file. For example, if you are interested in generating the HTML documentation, then you need to add the following <code>dokkaHtml</code> block:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">dokkaHtml <span style="color:#f92672">{</span>
+    moduleName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My module&#39;s documentation&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The above will set the overall title of the documentation for the associated (gradle) module. This is primarily displayed in the documentation&rsquo;s (HTML or Javadoc) main <code>index.html</code> page. Dokka allows you to provide different configuration options per source set:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">dokkaHtml <span style="color:#f92672">{</span>
+    moduleName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My module&#39;s documentation&#34;</span><span style="color:#f92672">)</span>
+
+    dokkaSourceSets <span style="color:#f92672">{</span>
+        configureEach <span style="color:#f92672">{</span>
+            displayName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>it<span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">)</span>
+            suppress<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We can replace the <code>configureEach</code> block with a specific source set name (e.g. <code>main</code>) if we are only interested in modifying the configuration of the specified source set. Multiple source sets can be configured by adding multiple blocks. So for example, if our module has a <code>main</code> and a <code>test</code> source set, we can configure them like so:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">dokkaHtml <span style="color:#f92672">{</span>
+    moduleName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My module&#39;s documentation&#34;</span><span style="color:#f92672">)</span>
+
+    dokkaSourceSets <span style="color:#f92672">{</span>
+        main <span style="color:#f92672">{</span>
+            displayName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;main&#34;</span><span style="color:#f92672">)</span>
+            suppress<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+        test <span style="color:#f92672">{</span>
+            displayName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">)</span>
+            suppress<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The <code>suppress</code> configuration option is used for including or excluding a source set.</p>
+<div class="admonition note">
+<p class="admonition title">Note</p>
+<p>By default the <code>test</code> source set is excluded from the documentation. To enable it you have to use the <code>suppress.set(false)</code> directive in the configuration.</p>
+</div>
+
+<p>A very useful feature of any documentation engine is the addition of links in external and internal code, which can be used by developers to link their documentation internally (e.g. within their project), or externally (e.g. with the language&rsquo;s or framework&rsquo;s documentation). In <a href="https://kotlinlang.org/docs/kotlin-doc.html">KDoc</a>, this is achieved using <a href="https://kotlinlang.org/docs/kotlin-doc.html#inline-markup">Markdown syntax</a>. Any entity that is included in square brackets <code>[]</code> will be resolved as a link. The link may be an entity in the same project, or part of an external documentation.</p>
+<div class="admonition important">
+<p class="admonition title">Warning</p>
+<p>Be careful at what tags the <a href="https://kotlinlang.org/docs/kotlin-doc.html">KDoc</a> specification supports, in order to only use the compatible ones. Although, the majority of Javadoc&rsquo;s tags (<strong>@param</strong>, <strong>@return</strong>, etc) are supported, the highly popular <strong>@link</strong> is unsupported. Links to classes are added through <a href="https://kotlinlang.org/docs/kotlin-doc.html#inline-markup">Markdown syntax</a>. This may cause some headaches, especially if you are porting a project from Java to Kotlin, and the generated documentation ignores such tags.</p>
+</div>
+
+<p>When dokka is generating the documentation, it will attempt to contact various online sources which will be used for linking to a specific entity (e.g. whether a class can be found in the Oracle JDK, or Kotlin documentation, or even the Android documentation). You can disable this functionality by using the offline mode attribute:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">dokkaHtml <span style="color:#f92672">{</span>
+    moduleName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My module&#39;s documentation&#34;</span><span style="color:#f92672">)</span>
+    offlineMode<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span>
+    dokkaSourceSets <span style="color:#f92672">{</span>
+        main <span style="color:#f92672">{</span>
+            displayName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;main&#34;</span><span style="color:#f92672">)</span>
+            suppress<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+            includes<span style="color:#f92672">.</span><span style="color:#a6e22e">from</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;description.md&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Now, only local information will be used when resolving entities. If these entities cannot be found, then a link to them will not get generated.</p>
+<div class="admonition important">
+<p class="admonition title">Warning</p>
+<p>To add package-level and module level documentation, you cannot use a <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/solaris/javadoc.html">package-info.java</a> file. Instead, you must create a regular markdown file with a very specific structure as discussed <a href="https://kotlinlang.org/docs/kotlin-doc.html#module-and-package-documentation">here</a>. Note that, only the first sentence of each section of this markdown file will be included in the documentation.</p>
+</div>
+
+<p>You include the markdown file with the module and package documentation, by adding the <code>includes</code> directive as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">dokkaHtml <span style="color:#f92672">{</span>
+    moduleName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;My module&#39;s documentation&#34;</span><span style="color:#f92672">)</span>
+
+    dokkaSourceSets <span style="color:#f92672">{</span>
+        main <span style="color:#f92672">{</span>
+            displayName<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;main&#34;</span><span style="color:#f92672">)</span>
+            suppress<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+            includes<span style="color:#f92672">.</span><span style="color:#a6e22e">from</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;description.md&#34;</span><span style="color:#f92672">)</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The above directive instructs Dokka to search for the <code>description.md</code> file in the directory of the corresponding gradle module, and use the <code>package</code> and <code>module</code> directives to generate the documentation accordingly.</p>
+<h2 id="packaging-the-documentation">Packaging the documentation</h2>
+<p>After you&rsquo;ve generated your documentation (especially your javadoc documentation), you may want to package it in a jar file and upload it to an external artifact repository, to accompany a corresponding dependency that you&rsquo;ve created. This can be achieved very easily with a simple task:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-groovy" data-lang="groovy">task <span style="color:#a6e22e">javadocJar</span><span style="color:#f92672">(</span>type: Jar<span style="color:#f92672">,</span> dependsOn: dokkaJavadoc<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    group <span style="color:#e6db74">&#34;publishing&#34;</span>
+    description <span style="color:#e6db74">&#34;Generates javadocJar based on Dokka&#34;</span>
+    archiveClassifier<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;javadoc&#34;</span><span style="color:#f92672">)</span>
+    from dokkaJavadoc<span style="color:#f92672">.</span><span style="color:#a6e22e">outputDirectory</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The above task will take the output of the <code>dokkaJavadoc</code> task and create a jar from it. It depends on the <code>dokkaJavadoc</code> task and will run it if required. Once this task has been run, a file called: <strong>GRADLE_MODULE_NAME-javadoc.jar</strong>, will be generated in the module&rsquo;s <code>build/libs</code> folder.</p>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>
