@@ -117,6 +117,8 @@ How to add dokka to your gradle project Adding dokka to your Gradle project is v
     from dokkaJavadoc<span style="color:#f92672">.</span><span style="color:#a6e22e">outputDirectory</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>The above task will take the output of the <code>dokkaJavadoc</code> task and create a jar from it. It depends on the <code>dokkaJavadoc</code> task and will run it if required. Once this task has been run, a file called: <strong>GRADLE_MODULE_NAME-javadoc.jar</strong>, will be generated in the module&rsquo;s <code>build/libs</code> folder.</p>
+<h2 id="example-configuration-and-output">Example configuration and output</h2>
+<p>You can find example dokka configuration in <a href="https://github.com/gmetal/metador">this repository</a>. The generated project documentation are available in <a href="/projects/metador/javadoc/index.html">Javadoc</a> and <a href="/projects/metador/html/index.html">KDoc</a> formats.</p>
 ]]></content>
         </item>
         

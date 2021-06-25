@@ -1,0 +1,11 @@
+$dokka.format:javadoc-v1
+$dokka.linkExtension:html
+$dokka.location:dev.gmetal.metador/Metador.Builder///PointingToDeclaration/dev/gmetal/metador/Metador.Builder.html
+$dokka.location:dev.gmetal.metador/Metador.Companion///PointingToDeclaration/dev/gmetal/metador/Metador.Companion.html
+$dokka.location:dev.gmetal.metador/Metador.FailureCallback///PointingToDeclaration/dev/gmetal/metador/Metador.FailureCallback.html
+$dokka.location:dev.gmetal.metador/Metador.Request.Builder///PointingToDeclaration/dev/gmetal/metador/Metador.Request.Builder.html
+$dokka.location:dev.gmetal.metador/Metador.Request///PointingToDeclaration/dev/gmetal/metador/Metador.Request.html
+$dokka.location:dev.gmetal.metador/Metador.SuccessCallback///PointingToDeclaration/dev/gmetal/metador/Metador.SuccessCallback.html
+dev.gmetal.metador
+dev.gmetal.metador.response
+
