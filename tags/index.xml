@@ -6,6 +6,97 @@
     <description>Recent content in Tags on gmetal&#39;s dev blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>android</title>
+      <link>https://gmetal.dev/tags/android/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/android/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>bdd</title>
+      <link>https://gmetal.dev/tags/bdd/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/bdd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kotest</title>
+      <link>https://gmetal.dev/tags/kotest/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/kotest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kotlin</title>
+      <link>https://gmetal.dev/tags/kotlin/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/kotlin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>metador</title>
+      <link>https://gmetal.dev/tags/metador/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/metador/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>unit testing</title>
+      <link>https://gmetal.dev/tags/unit-testing/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/unit-testing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>documentation</title>
+      <link>https://gmetal.dev/tags/documentation/</link>
+      <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/documentation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dokka</title>
+      <link>https://gmetal.dev/tags/dokka/</link>
+      <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/dokka/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>javadoc</title>
+      <link>https://gmetal.dev/tags/javadoc/</link>
+      <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/javadoc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kdoc</title>
+      <link>https://gmetal.dev/tags/kdoc/</link>
+      <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/kdoc/</guid>
+      <description></description>
+    </item>
+    
   </channel>
 </rss>

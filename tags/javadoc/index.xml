@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>javadoc on gmetal&#39;s dev blog</title>
+    <link>https://gmetal.dev/tags/javadoc/</link>
+    <description>Recent content in javadoc on gmetal&#39;s dev blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Mon, 21 Jun 2021 06:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/javadoc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Adding documentation to a kotlin project with Dokka </title>
+      <link>https://gmetal.dev/posts/add-documentation-with-dokka/</link>
+      <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/posts/add-documentation-with-dokka/</guid>
+      <description>Library by Geoff Coupe, licensed under CC BY-NC-SA 2.0
+  Dokka is for kotlin what Javadoc is for Java. It converts your KDoc-styled comments into a variety of document format such as HTML, Markdown (Github and Jekyll forms) and Javadoc HTML.
+How to add dokka to your gradle project Adding dokka to your Gradle project is very easy, as discussed in their documentation. You just add the dokka plugin to the plugins block of your module&amp;rsquo;s build gradle (not the root build.</description>
+    </item>
+    
+  </channel>
+</rss>

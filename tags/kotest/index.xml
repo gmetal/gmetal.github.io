@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kotest on gmetal&#39;s dev blog</title>
+    <link>https://gmetal.dev/tags/kotest/</link>
+    <description>Recent content in kotest on gmetal&#39;s dev blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
+    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/kotest/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using kotest in your Android project</title>
+      <link>https://gmetal.dev/posts/using-kotest/</link>
+      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/posts/using-kotest/</guid>
+      <description>Android Studio Unit Testing Support by compscigrad is licensed under CC BY-NC-SA 2.0
+  Kotest is a Kotlin multiplatform testing framework and assertions library. It is a powerful framework, that can completely replace the default kotlin test framework, which is based on the popular JUnit and TestNG. Furthermore, Kotest supports some more advanced features, such as property-based testing and its own assertions framework.
+An interesting question may be why would anyone use kotest over the standard, popular JUnit (for example) framework?</description>
+    </item>
+    
+  </channel>
+</rss>

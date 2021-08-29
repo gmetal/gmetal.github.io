@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>gmetal&#39;s dev blog</title>
-    <link>https://gmetal.dev/</link>
-    <description>Recent content on gmetal&#39;s dev blog</description>
+    <title>kotlin on gmetal&#39;s dev blog</title>
+    <link>https://gmetal.dev/tags/kotlin/</link>
+    <description>Recent content in kotlin on gmetal&#39;s dev blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/kotlin/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Using kotest in your Android project</title>
       <link>https://gmetal.dev/posts/using-kotest/</link>
@@ -20,16 +20,6 @@ An interesting question may be why would anyone use kotest over the standard, po
     </item>
     
     <item>
-      <title>Metador - the HTML metadata retriever library</title>
-      <link>https://gmetal.dev/projects/metador/</link>
-      <pubDate>Mon, 21 Jun 2021 17:34:13 +0000</pubDate>
-      
-      <guid>https://gmetal.dev/projects/metador/</guid>
-      <description>Metador is an easy to use library for retrieving the META tags of an HTML page, for use in an Android mobile application. It can be used in scenarios where the developer would have to extract the information from a list of HTML pages. HTML metadata may contain very useful information, such as a title, a text summary, an associated image, etc.
-To use Metador, you create a Metador object through the associated Metador.</description>
-    </item>
-    
-    <item>
       <title>Adding documentation to a kotlin project with Dokka </title>
       <link>https://gmetal.dev/posts/add-documentation-with-dokka/</link>
       <pubDate>Mon, 21 Jun 2021 06:00:00 +0000</pubDate>
@@ -38,16 +28,6 @@ To use Metador, you create a Metador object through the associated Metador.</des
       <description>Library by Geoff Coupe, licensed under CC BY-NC-SA 2.0
   Dokka is for kotlin what Javadoc is for Java. It converts your KDoc-styled comments into a variety of document format such as HTML, Markdown (Github and Jekyll forms) and Javadoc HTML.
 How to add dokka to your gradle project Adding dokka to your Gradle project is very easy, as discussed in their documentation. You just add the dokka plugin to the plugins block of your module&amp;rsquo;s build gradle (not the root build.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://gmetal.dev/about/</link>
-      <pubDate>Thu, 13 May 2021 13:48:10 +0000</pubDate>
-      
-      <guid>https://gmetal.dev/about/</guid>
-      <description>My name is George Metaxas and I am an Android Software Engineer. I have been working with Android since 2012, initially as a hobby and since mid-2014 professionally. I am currently employed at Bespot. I have been an enthusiastic, long time Linux user, with Gentoo Linux still being my distribution of choice (although lately I have also been trying out Arch Linux).
-I have previously worked as a backend software engineer / devops engineer at OTE Group of companies between 2011 and 2014.</description>
     </item>
     
   </channel>

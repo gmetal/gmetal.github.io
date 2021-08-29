@@ -2,8 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://gmetal.dev/tags/android/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/bdd/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://gmetal.dev/</loc>
-    <lastmod>2021-06-21T17:34:13+00:00</lastmod>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/kotest/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/kotlin/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/metador/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/posts/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/unit-testing/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/posts/using-kotest/</loc>
+    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/projects/metador/</loc>
     <lastmod>2021-06-21T17:34:13+00:00</lastmod>
@@ -14,7 +41,16 @@
     <loc>https://gmetal.dev/posts/add-documentation-with-dokka/</loc>
     <lastmod>2021-06-21T06:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://gmetal.dev/posts/</loc>
+    <loc>https://gmetal.dev/tags/documentation/</loc>
+    <lastmod>2021-06-21T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/dokka/</loc>
+    <lastmod>2021-06-21T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/javadoc/</loc>
+    <lastmod>2021-06-21T06:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/kdoc/</loc>
     <lastmod>2021-06-21T06:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/about/</loc>
@@ -23,7 +59,5 @@
     <loc>https://gmetal.dev/blog/</loc>
   </url><url>
     <loc>https://gmetal.dev/series/</loc>
-  </url><url>
-    <loc>https://gmetal.dev/tags/</loc>
   </url>
 </urlset>
