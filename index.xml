@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 Nov 2021 08:01:49 +0000</lastBuildDate><atom:link href="https://gmetal.dev/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Unit Testing WithTimeout in Coroutines With Kotest</title>
+      <link>https://gmetal.dev/posts/unit-testing-withtimeout-with-kotest/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/posts/unit-testing-withtimeout-with-kotest/</guid>
+      <description>Sometimes you may be required to implement code that executes periodic actions. In Java, you can implement such a feature using a Timer. Kotlin also provided a wrapper for this, using the fixedRateTimer function. The above mentioned method of creating a timer is old-style, thread-based and JVM specific. Coroutines offer a better solution for solving this problem, in a more lightweight, efficient and cross-platform manner. One such more-kotlin styled approach, is provided by the ticker, which is part of the Channels API.</description>
+    </item>
+    
     <item>
       <title>Using kotest in your Android project</title>
       <link>https://gmetal.dev/posts/using-kotest/</link>

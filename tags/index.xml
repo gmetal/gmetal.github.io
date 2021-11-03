@@ -7,7 +7,52 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 03 Nov 2021 08:01:49 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>coroutines</title>
+      <link>https://gmetal.dev/tags/coroutines/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/coroutines/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>junit5</title>
+      <link>https://gmetal.dev/tags/junit5/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/junit5/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kotest</title>
+      <link>https://gmetal.dev/tags/kotest/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/kotest/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>timer</title>
+      <link>https://gmetal.dev/tags/timer/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/timer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>unit test</title>
+      <link>https://gmetal.dev/tags/unit-test/</link>
+      <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/unit-test/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>android</title>
       <link>https://gmetal.dev/tags/android/</link>
@@ -23,15 +68,6 @@
       <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
       
       <guid>https://gmetal.dev/tags/bdd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kotest</title>
-      <link>https://gmetal.dev/tags/kotest/</link>
-      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
-      
-      <guid>https://gmetal.dev/tags/kotest/</guid>
       <description></description>
     </item>
     

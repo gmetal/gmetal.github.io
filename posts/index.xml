@@ -6,8 +6,418 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Wed, 03 Nov 2021 08:01:49 +0000</lastBuildDate>
         <atom:link href="https://gmetal.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Unit Testing WithTimeout in Coroutines With Kotest</title>
+            <link>https://gmetal.dev/posts/unit-testing-withtimeout-with-kotest/</link>
+            <pubDate>Wed, 03 Nov 2021 08:01:49 +0000</pubDate>
+            
+            <guid>https://gmetal.dev/posts/unit-testing-withtimeout-with-kotest/</guid>
+            <description>Sometimes you may be required to implement code that executes periodic actions. In Java, you can implement such a feature using a Timer. Kotlin also provided a wrapper for this, using the fixedRateTimer function. The above mentioned method of creating a timer is old-style, thread-based and JVM specific. Coroutines offer a better solution for solving this problem, in a more lightweight, efficient and cross-platform manner. One such more-kotlin styled approach, is provided by the ticker, which is part of the Channels API.</description>
+            <content type="html"><![CDATA[<p>Sometimes you may be required to implement code that executes periodic actions. In Java, you can implement such a feature using a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Timer.html">Timer</a>. Kotlin also provided a wrapper for this, using the <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.concurrent/fixed-rate-timer.html">fixedRateTimer</a> function. The above mentioned method of creating a timer is old-style, thread-based and JVM specific. Coroutines offer a better solution for solving this problem, in a more lightweight, efficient and cross-platform manner. One such more-kotlin styled approach, is provided by the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/ticker.html">ticker</a>, which is part of the Channels API. However, this approach is currently marked as <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-obsolete-coroutines-api/index.html">ObsoleteCoroutinesApi</a>, and may be subject to change.</p>
+<h2 id="a-suspendable-coroutine-based-timer-implementation">A suspendable, coroutine-based Timer implementation</h2>
+<p>It is not very difficult to create a custom implementation of the Timer functionality, while also leveraging the power of Kotlin coroutines. This can be based on the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/with-timeout.html">withTimeout</a> and the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/delay.html">delay</a> functions. The <code>withTimeout</code> function runs a given block until the specified timeout. If the timeout is not exceeded, then it exists normally. However, if the timeout is exceeded, it throws a <code>TimeoutCancellationException</code>. The <code>delay</code> function will suspend the current coroutine until the specified amount of time has passed.</p>
+<p>Using the abovementioned suspending functions, a trivial timer implementation can be implemented:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CoroutineTimer</span>(
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> period: Long = <span style="color:#ae81ff">1000L</span>,
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> repeat: Boolean = <span style="color:#66d9ef">false</span>,
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> timerAction: () <span style="color:#f92672">-&gt;</span> Unit
+) {
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">var</span> job: Job? = <span style="color:#66d9ef">null</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Starts the execution of the timer
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@Synchronized</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">start</span>() {
+        <span style="color:#66d9ef">if</span> (isRunning()) {
+            <span style="color:#66d9ef">return</span>
+        }
+
+        job = CoroutineScope(dispatcher).launch {
+            withTimeout(period) {
+                delay(period + <span style="color:#ae81ff">1</span>)
+            }
+        }.also {
+            <span style="color:#66d9ef">it</span>.invokeOnCompletion { exc <span style="color:#f92672">-&gt;</span>
+                <span style="color:#66d9ef">when</span> (exc) {
+                    <span style="color:#66d9ef">is</span> TimeoutCancellationException <span style="color:#f92672">-&gt;</span> {
+                        <span style="color:#75715e">// Timeout reached, execute the action and reschedule if required
+</span><span style="color:#75715e"></span>                        timerAction()
+                        <span style="color:#66d9ef">if</span> (repeat) {
+                            start()
+                        }
+                    }
+                    <span style="color:#66d9ef">is</span> CancellationException <span style="color:#f92672">-&gt;</span> {
+                        <span style="color:#75715e">// The stop method was called and I&#39;ve been cancelled
+</span><span style="color:#75715e"></span>                        <span style="color:#75715e">// Ignore
+</span><span style="color:#75715e"></span>                    }
+                    <span style="color:#66d9ef">else</span> <span style="color:#f92672">-&gt;</span> {
+                        <span style="color:#75715e">// Unknown exception received
+</span><span style="color:#75715e"></span>                        <span style="color:#75715e">// Ignore
+</span><span style="color:#75715e"></span>                    }
+                }
+            }
+        }
+    }
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Stops the execution of the timer, if it is running
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">stop</span>() {
+        job<span style="color:#f92672">?.</span>cancel(CancellationException())
+    }
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * Returns whether the timer is currently running or not
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">isRunning</span>(): Boolean = job<span style="color:#f92672">?.</span>isActive <span style="color:#f92672">==</span> <span style="color:#66d9ef">true</span>
+}
+</code></pre></div><p>Let&rsquo;s dive into the code. The <code>CoroutineTimer</code> class, takes 4 arguments in its constructor:</p>
+<ul>
+<li>the period of execution in milliseconds</li>
+<li>whether the timer is repeatable or once-off</li>
+<li>the CoroutineDispatcher to use while waiting (is to better support tests)</li>
+<li>the action to execute, as a non-suspending lambda that takes no arguments and returns no value (obviously this can be modified accordingly)</li>
+</ul>
+<div class="admonition note">
+<p class="admonition title">Note</p>
+<p>Specifying the coroutine dispatcher in the constructor of our class (with the desired default implementation) allows us to control it in our tests. It is currently considered a best practice. A good source of information about this approach can be found <a href="https://developer.android.com/kotlin/coroutines/coroutines-best-practices">here</a>.</p>
+</div>
+
+<p>The timer has two states, started and stopped. It is initiallised in the stopped state and can be controlled with the following methods:</p>
+<ul>
+<li>the <code>start</code> method starts the timer, when it is not running. If the timer is already running, it will not be started again.</li>
+<li>the <code>stop</code> method stops the timer</li>
+<li>the <code>isRunning</code> method returns whether the timer is currently running or not. When the timer is started, it is considered to be running, whereas when it is stopped, it is not considered as running. In case the timer is used in an once-off fashion, after the action has executed, the timer is considered to be stopped (i.e. not running).</li>
+</ul>
+<p>The core functionality has been implemented in the <code>start</code> method. Internally, it launches a new coroutine that uses the <code>withTimeout</code> function for the timer. Inside the <code>withTimeout</code>, the code uses the suspending <code>delay</code> function, to delay until the timeout is reached. When the timeout is reached, a <code>TimeoutCancellationException</code> is thrown by the <code>withTimeout</code> function. In case, the timer is cancelled, then a <code>CancellationException</code> will be thrown (by the <code>stop</code> method). The code will inspect the result of the coroutine, with the help of the <code>invokeOnCompletion</code>, and if the timeout was reached, it will execute the action and then proceed to reschedule the next execution of the code (if the timer is repeatable). To determine whether the timer is running and to support the timer cancellation, a reference to the <code>Job</code> object returned by <code>launch</code> function is maintained.</p>
+<h2 id="unit-testing-the-implementation-with-junit---the-naive-way">Unit testing the implementation with JUnit - the naive way</h2>
+<p>Testing multithreading code is always a challenging task. In our case, we have two main test cases:</p>
+<ul>
+<li>the timer action is executed after the timer has elapsed (exactly once when the <code>repeat</code> flag is not set, or multiple times when it is set)</li>
+<li>the timer action is not executed when the timer is cancelled before it is elapsed</li>
+</ul>
+<p>The naive approach would be to:</p>
+<ul>
+<li>use a mock timer action for testing if it is executed or not</li>
+<li>use a small timer interval and carefully timed <code>sleeps</code> for waiting until the timer elapses</li>
+</ul>
+<div class="admonition note">
+<p class="admonition title">Note</p>
+<p>A  <code>sleep</code> refers to an invocation of the <a href="https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/lang/Thread.html#sleep(long)">java.lang.Thread.sleep()</a> method, that will make the current thread temporarily pause, for the specified time interval in milliseconds. It is often a cheap, and inefficient way to wait for a bit before continuing to perform a task. It is rarely a good programming practice and is JVM specific.</p>
+</div>
+
+<p>There are significant shortcomings with blocking the test with the <code>sleeps</code> method  until the timer elapses. First of all, the sleeps must be carefully timed, or you may end up having non-deterministic test outcomes, due to the non-deterministic nature of thread scheduling. Blocking the thread that executes your test, increases your overall test execution time (and unit tests must not take too long). In more complex situations, using sleeps will become very difficult to manage.</p>
+<p>If we had to write our tests using this inefficient manner, let&rsquo;s see how this could be done (using <a href="https://junit.org/junit5/docs/current/user-guide/">JUnit 5</a> and <a href="https://mockk.io">Mockk</a>). First of all, we want to test that when the <code>repeat</code> flag is false and the timer is started, the action will be executed after the timer has elapsed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Timeout</span>(<span style="color:#ae81ff">3500</span>, unit = TimeUnit.MILLISECONDS)
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">without_repeat_calling_start_will_execute_the_timer_action_once</span>() {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">false</span>, timerAction = mockTimerAction)
+
+        testCoroutineTimer.start()
+
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        <span style="color:#66d9ef">while</span> (testCoroutineTimer.isRunning()) {
+            sleep(<span style="color:#ae81ff">1000</span>)
+        }
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+        verify { mockTimerAction.invoke() }
+    }
+</code></pre></div><p>The above test creates a new non-repeatable <code>CoroutineTimer</code>, with a time period of 2000 msec, which will execute the mockTimerAction. It proceeds to start the timer, verify that it is running, and then sleep until the timer stops running. When this happens, the test is concluded by verifying that the mock timer action was executed. Currently, the test runs successfully. But what would happen if while updating the code, a bug is introduced in the <code>isRunning</code> method and it always reports that the timer is running. In this case, the test would fall into an infinite loop. To cater for this eventuality, the JUnit5 <a href="https://junit.org/junit5/docs/current/api/org.junit.jupiter.api/org/junit/jupiter/api/Timeout.html">Timeout annotation</a> was added, which instructs the test runner to terminate the test execution after the specified time interval elapses.</p>
+<p>To test that if the timer action is not executed when the timer is cancelled, we can use the following test:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Timeout</span>(<span style="color:#ae81ff">3500</span>, unit = TimeUnit.MILLISECONDS)
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">without_repeat_calling_stop_will_stop_the_timer_without_executing_the_timer_action</span>() {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">false</span>, timerAction = mockTimerAction)
+
+        testCoroutineTimer.start()
+        sleep(<span style="color:#ae81ff">1000</span>)
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        testCoroutineTimer.stop()
+
+        <span style="color:#66d9ef">while</span> (testCoroutineTimer.isRunning()) {
+            sleep(<span style="color:#ae81ff">1000</span>)
+        }
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+        verify { mockTimerAction wasNot called }
+    }
+</code></pre></div><p>In the above test, the timer is initialised with a large enough period, such that when the <code>stop</code> method is called, the timer will not have expired. The <code>isRunning</code> checks after the test must still be performed, because <code>stop</code> may not be instantaneous. Again, to avoid waiting forever for the timer to stop, the <code>Timeout</code> JUnit 5 annotation is used.</p>
+<p>To test the multiple execution of the timer action (i.e. the repeat flag is set to true), the following test can be used:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">with_repeat_wait_to_execute_twice_and_then_stop</span>() {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">true</span>, timerAction = mockTimerAction)
+
+        testCoroutineTimer.start()
+        sleep(<span style="color:#ae81ff">2100</span>)
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        verify(atLeast = <span style="color:#ae81ff">1</span>, atMost = <span style="color:#ae81ff">1</span>) { mockTimerAction.invoke() }
+        sleep(<span style="color:#ae81ff">2100</span>)
+        testCoroutineTimer.stop()
+        verify(atLeast = <span style="color:#ae81ff">2</span>, atMost = <span style="color:#ae81ff">2</span>) { mockTimerAction.invoke() }
+
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+    }
+</code></pre></div><p>The above test starts the timer, sleeps until the timer expires once, and then sleeps a bit more to verify that the timer expires again. Finally, it stops the timer execution and verifies that the timer has stopped.</p>
+<h2 id="unit-testing-the-implementation-with-junit---the-coroutine-way">Unit testing the implementation with JUnit - the coroutine way</h2>
+<p>Coroutines are a more advanced, modern and fine grained tool for achieving concurrency. As such, they include much better testing support, which can be found in the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/">kotlinx-coroutines-test artifact</a>. The main testing functionalities provided by the package are the following:</p>
+<ul>
+<li>The <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-test-coroutine-dispatcher/index.html">TestCoroutineDispatcher</a> which executes tasks synchronously, but also allows the developer to <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-delay-controller/index.html">control the dispatcher&rsquo;s internal clock</a>.</li>
+<li>Controlling the Dispatchers.Main dispatcher, using the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/set-main.html">Dispatchers.setMain</a> and <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/reset-main.html">Dispatchers.resetMain</a> functions.</li>
+<li>The <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/run-blocking-test.html">runBlockingTest function</a>, which executes a test by bypassing any delays introduced by <code>async</code> and <code>launch</code> and skipping the calls to <code>delay</code>. In essence, this is similar to the <code>runBlocking</code> coroutine builder function.</li>
+</ul>
+<p>Armed with the abovementioned tools, we can rewrite our tests so that:</p>
+<ul>
+<li>they are much more manageable</li>
+<li>they use the provided coroutine tools</li>
+<li>they run faster
+There are several general guidelines that will assist you in effectively testing coroutine code. First of all, you should always <code>inject</code> the dispatcher in use. You should also provide the desired dispatcher as a default value. Using this simple tip, allows you to override the dispatcher in your tests with the <code>TestCoroutineDispatcher</code>. Also, your test functions should always contain a single <code>runBlockingTest</code> call, with the test code inside. The <code>runBlockingTest</code> can use a predefined coroutine dispatcher, allowing you to easily control its internal clock. Finally, it is essentially a coroutine builder function allowing you to call other suspend functions immediately.</li>
+</ul>
+<div class="admonition important">
+<p class="admonition title">Warning</p>
+<p>The majority of the coroutine testing tools are currently marked as <code>@ExperimentalCoroutinesApi</code>, which means that their API is subject to change. You will have to explicitly enable them in your tests.</p>
+</div>
+
+<p>First of all, we declare an instance of the TestCoroutineDispatcher in our test class, which we recreate before each test. This Dispatcher will give us access to the coroutine&rsquo;s internal clock (e.g. move time forward!). Next, we wrap the body of the three aforementioned tests, inside a <code>runBlockingTest</code> call, such that we eliminate delays from <code>async</code> and <code>launch</code>. We also pass the reference of our TestCoroutineDispatcher to the <code>runBlockingTest</code> method, and also inject this dispatcher to our Timer class, such that they both use the same CoroutineContext (we are thus able to call the <code>advanceTimeBy</code> inside the body of our test, rather than explicitly on the test dispatcher). Finally, we replace the <code>sleep</code> related calls, with calls to <code>advanceTimeBy</code> (and remove any loops we may have been using).</p>
+<p>Consequently, the first test becomes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Timeout</span>(<span style="color:#ae81ff">3500</span>, unit = TimeUnit.MILLISECONDS)
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">without_repeat_calling_start_will_execute_the_timer_action_once</span>() = runBlockingTest(testCoroutineDispatcher) {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">false</span>, testCoroutineDispatcher, mockTimerAction)
+
+        testCoroutineTimer.start()
+
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+        verify { mockTimerAction.invoke() }
+    }
+</code></pre></div><p>The second test becomes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Timeout</span>(<span style="color:#ae81ff">3500</span>, unit = TimeUnit.MILLISECONDS)
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">without_repeat_calling_stop_will_stop_the_timer_without_executing_the_timer_action</span>() = runBlockingTest(testCoroutineDispatcher) {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">false</span>, testCoroutineDispatcher, mockTimerAction)
+
+        testCoroutineTimer.start()
+        advanceTimeBy(<span style="color:#ae81ff">1000</span>)
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        testCoroutineTimer.stop()
+        advanceTimeBy(<span style="color:#ae81ff">1500</span>)
+
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+        verify { mockTimerAction wasNot called }
+    }
+</code></pre></div><p>And finally, the third test becomes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">with_repeat_wait_to_execute_twice_and_then_stop</span>() = runBlockingTest(testCoroutineDispatcher) {
+        <span style="color:#66d9ef">val</span> testCoroutineTimer = CoroutineTimer(<span style="color:#ae81ff">2000</span>, <span style="color:#66d9ef">true</span>, testCoroutineDispatcher, mockTimerAction)
+
+        testCoroutineTimer.start()
+        advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+        assertEquals(<span style="color:#66d9ef">true</span>, testCoroutineTimer.isRunning())
+        verify(atLeast = <span style="color:#ae81ff">1</span>, atMost = <span style="color:#ae81ff">1</span>) { mockTimerAction.invoke() }
+        advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+        testCoroutineTimer.stop()
+        verify(atLeast = <span style="color:#ae81ff">2</span>, atMost = <span style="color:#ae81ff">2</span>) { mockTimerAction.invoke() }
+
+        assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+    }
+</code></pre></div><h2 id="unit-testing-the-implementation-with-kotest">Unit testing the implementation with Kotest</h2>
+<p><a href="https://kotest.io/">Kotest</a> is a more modern testing framework for Kotlin. It makes heavy use of coroutines for its implementation, and therefore includes first-class support for them. For example, you can unit test <code>suspend</code> functions without enclosing them in <code>runBlocking</code> or <code>runBlockingTest</code> calls. In the upcoming 5.0.0 release there will be support for the <a href="https://github.com/kotest/kotest/pull/2550">TestCoroutinDispatcher</a>, which is currently available in the 5.0.0.M3 snapshot release.</p>
+<p>The changes required for the conversion of the tests to the Kotest library, can be found <a href="https://github.com/gmetal/coroutine-timer/commit/d5b5bc74528039df8c08c0b6f35acd3fa282dc31">here</a>. One of the great advantages of Kotest is that it supports using multiple testing styles. The unit tests of the CoroutineTimer were converted to the BehaviorSpec testing style. The <code>TestCoroutineDispatcher</code> in Kotest is exported through the [DelayController interface]{https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/kotlinx.coroutines.test/-delay-controller/index.html}. We can enable it (along with a default timeout of all test cases) in our Kotest BehaviorSpec tests, with the following code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#a6e22e">@ExperimentalStdlibApi</span>
+<span style="color:#a6e22e">@ExperimentalKotest</span>
+<span style="color:#a6e22e">@ExperimentalCoroutinesApi</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CoroutineTimerTest</span> : BehaviorSpec({
+    <span style="color:#75715e">// Sets per-test case timeout for all test cases in the spec
+</span><span style="color:#75715e"></span>    timeout = <span style="color:#ae81ff">3500</span>
+    <span style="color:#75715e">// Enable the TestCoroutineDispatcher
+</span><span style="color:#75715e"></span>    testCoroutineDispatcher = <span style="color:#66d9ef">true</span>
+</code></pre></div><p>To get access to the coroutine dispatcher in use you can use the following code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">coroutineContext[CoroutineDispatcher.Key]
+</code></pre></div><p>Kotest uses the TestCoroutineDispatcher in the current <code>coroutineContext</code>, which can be acquired through the <code>CoroutineDispatcher.Key</code>. Thus we can create an initialisation function like the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">    <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">setupTest</span>(repeat: Boolean, coroutineContext: CoroutineContext) {
+        mockTimerAction = mockk()
+        every { mockTimerAction.invoke() } just Runs
+
+        testCoroutineTimer = CoroutineTimer(
+            <span style="color:#ae81ff">2000</span>,
+            repeat,
+            timerAction = mockTimerAction,
+            dispatcher = coroutineContext[CoroutineDispatcher.Key]<span style="color:#f92672">!!</span>
+        )
+    }
+</code></pre></div><p>In our tests we need not use the <code>runBlockingTest</code> function call like before. In order to adjust the internal coroutine dispatcher timer, Kotest exposes the <code>delayController</code> property of the TestContext. Apart from the different testing style introduced, very little needs to be changed, in comparison with the JUnit approach and the <a href="https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/">kotlinx-coroutines-test artifact</a>. Thus the tests can be rewritten:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">Given(<span style="color:#e6db74">&#34;a CoroutineTimer&#34;</span>) {
+    And(<span style="color:#e6db74">&#34;the timer executes once&#34;</span>) {
+        And(<span style="color:#e6db74">&#34;the timer is running&#34;</span>) {
+            When(<span style="color:#e6db74">&#34;the timer is executed&#34;</span>) {
+                setupTest(repeat = <span style="color:#66d9ef">false</span>, testContext.coroutineContext)
+                 testCoroutineTimer.start()
+                <span style="color:#66d9ef">val</span> timerWasRunning = testCoroutineTimer.isRunning()
+
+                delayController.advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+
+                Then(<span style="color:#e6db74">&#34;the timer was running&#34;</span>) {
+                    timerWasRunning shouldBe <span style="color:#66d9ef">true</span>
+                }
+                Then(<span style="color:#e6db74">&#34;the timer stops running&#34;</span>) {
+                    testCoroutineTimer.isRunning() shouldBe <span style="color:#66d9ef">false</span>
+                }
+                Then(<span style="color:#e6db74">&#34;the timerAction is executed once&#34;</span>) {
+                    verify(atMost = <span style="color:#ae81ff">1</span>, atLeast = <span style="color:#ae81ff">1</span>) { mockTimerAction.invoke() }
+                }
+            }
+            When(<span style="color:#e6db74">&#34;the timer is stopped&#34;</span>) {
+                setupTest(repeat = <span style="color:#66d9ef">false</span>, testContext.coroutineContext)
+                testCoroutineTimer.start()
+
+                delayController.advanceTimeBy(<span style="color:#ae81ff">1000</span>)
+
+                <span style="color:#66d9ef">val</span> timerWasRunning = testCoroutineTimer.isRunning()
+
+                 testCoroutineTimer.stop()
+                delayController.advanceTimeBy(<span style="color:#ae81ff">1500</span>)
+
+                Then(<span style="color:#e6db74">&#34;verify the time was running&#34;</span>) {
+                    timerWasRunning shouldBe <span style="color:#66d9ef">true</span>
+                }
+                Then(<span style="color:#e6db74">&#34;the timer stops running&#34;</span>) {
+                    assertEquals(<span style="color:#66d9ef">false</span>, testCoroutineTimer.isRunning())
+                }
+                Then(<span style="color:#e6db74">&#34;the timer actions is not executed&#34;</span>) {
+                    verify { mockTimerAction wasNot called }
+                }
+            }
+        }
+    }
+    And(<span style="color:#e6db74">&#34;the timer executes indefinitely&#34;</span>) {
+        When(<span style="color:#e6db74">&#34;a single time period has elapsed&#34;</span>) {
+            setupTest(repeat = <span style="color:#66d9ef">true</span>, testContext.coroutineContext)
+            testCoroutineTimer.start()
+            delayController.advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+            <span style="color:#66d9ef">val</span> timerWasRunning = testCoroutineTimer.isRunning()
+            delayController.advanceTimeBy(<span style="color:#ae81ff">2100</span>)
+
+            testCoroutineTimer.stop()
+
+            Then(<span style="color:#e6db74">&#34;the timer was running&#34;</span>) {
+                timerWasRunning shouldBe <span style="color:#66d9ef">true</span>
+            }
+            Then(<span style="color:#e6db74">&#34;the timer action has executed twice&#34;</span>) {
+                verify(atLeast = <span style="color:#ae81ff">2</span>, atMost = <span style="color:#ae81ff">2</span>) { mockTimerAction.invoke() }
+            }
+            Then(<span style="color:#e6db74">&#34;the timer is not running&#34;</span>) {
+                testCoroutineTimer.isRunning() shouldBe <span style="color:#66d9ef">false</span>
+            }
+        }
+    }}
+})
+</code></pre></div><h2 id="benchmarking-the-different-test-implementations">Benchmarking the different test implementations</h2>
+<p>To benchmark the performance gains of using the <code>kotlinx-coroutine-test</code> means of testing versus the traditional <code>sleep</code> approach versus the Kotest implementation, the tests were executed 10 times with each different approach. The tables below summarises the results, which show that the tests using the coroutine tools were significantly faster.</p>
+<table>
+<thead>
+<tr>
+<th>Run iteration</th>
+<th>Test w/h Sleeps</th>
+<th>Test with Coroutines</th>
+<th>Test with Kotest</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>10.878</td>
+<td>2.452</td>
+<td>0.022</td>
+</tr>
+<tr>
+<td>2</td>
+<td>10.813</td>
+<td>2.416</td>
+<td>0.017</td>
+</tr>
+<tr>
+<td>3</td>
+<td>10.916</td>
+<td>2.805</td>
+<td>0.025</td>
+</tr>
+<tr>
+<td>4</td>
+<td>10.865</td>
+<td>2.263</td>
+<td>0.013</td>
+</tr>
+<tr>
+<td>5</td>
+<td>10.890</td>
+<td>2.771</td>
+<td>0.016</td>
+</tr>
+<tr>
+<td>6</td>
+<td>10.948</td>
+<td>2.727</td>
+<td>0.021</td>
+</tr>
+<tr>
+<td>7</td>
+<td>10.894</td>
+<td>2.641</td>
+<td>0.019</td>
+</tr>
+<tr>
+<td>8</td>
+<td>10.906</td>
+<td>2.785</td>
+<td>0.037</td>
+</tr>
+<tr>
+<td>9</td>
+<td>10.905</td>
+<td>2.694</td>
+<td>0.021</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10.912</td>
+<td>2.330</td>
+<td>0.024</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Test w/h Sleeps</th>
+<th>Test with Coroutines</th>
+<th>Test with Kotest</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AVG</td>
+<td>10.890</td>
+<td>2.617</td>
+<td>0.024</td>
+</tr>
+<tr>
+<td>MEDIAN</td>
+<td>10.894</td>
+<td>2.694</td>
+<td>0.021</td>
+</tr>
+</tbody>
+</table>
+<p>The tests executed with Kotest were blazingly fast. It is worth pointing out, that on the machine were the tests were run, it took a bit more than 2 seconds to initialise the JUnit coroutine test suite. This time was added in the first test executed. This means, that excluding the test initialisation, the tests using coroutine tools took milliseconds to complete, making them comparable to the Kotest tests. Clearly, using coroutines results in code which is much cleaner, more testable and much faster.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Using kotest in your Android project</title>
