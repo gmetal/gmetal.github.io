@@ -7,7 +7,52 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Wed, 03 Nov 2021 08:01:49 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 18 Jan 2022 08:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>apply</title>
+      <link>https://gmetal.dev/tags/apply/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/apply/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>best practices</title>
+      <link>https://gmetal.dev/tags/best-practices/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/best-practices/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kotlin</title>
+      <link>https://gmetal.dev/tags/kotlin/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/kotlin/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>refactoring</title>
+      <link>https://gmetal.dev/tags/refactoring/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/refactoring/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scope functions</title>
+      <link>https://gmetal.dev/tags/scope-functions/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/tags/scope-functions/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>coroutines</title>
       <link>https://gmetal.dev/tags/coroutines/</link>
@@ -68,15 +113,6 @@
       <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
       
       <guid>https://gmetal.dev/tags/bdd/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kotlin</title>
-      <link>https://gmetal.dev/tags/kotlin/</link>
-      <pubDate>Sat, 28 Aug 2021 16:00:00 +0000</pubDate>
-      
-      <guid>https://gmetal.dev/tags/kotlin/</guid>
       <description></description>
     </item>
     

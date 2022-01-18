@@ -2,22 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gmetal.dev/tags/coroutines/</loc>
-    <lastmod>2021-11-03T08:01:49+00:00</lastmod>
+    <loc>https://gmetal.dev/tags/apply/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/posts/avoid-long-apply-in-variable-init/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/best-practices/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/kotlin/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/posts/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/refactoring/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/scope-functions/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/</loc>
+    <lastmod>2022-01-18T08:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gmetal.dev/tags/coroutines/</loc>
     <lastmod>2021-11-03T08:01:49+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/tags/junit5/</loc>
     <lastmod>2021-11-03T08:01:49+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/tags/kotest/</loc>
-    <lastmod>2021-11-03T08:01:49+00:00</lastmod>
-  </url><url>
-    <loc>https://gmetal.dev/posts/</loc>
-    <lastmod>2021-11-03T08:01:49+00:00</lastmod>
-  </url><url>
-    <loc>https://gmetal.dev/tags/</loc>
     <lastmod>2021-11-03T08:01:49+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/tags/timer/</loc>
@@ -33,9 +51,6 @@
     <lastmod>2021-08-28T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/tags/bdd/</loc>
-    <lastmod>2021-08-28T16:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://gmetal.dev/tags/kotlin/</loc>
     <lastmod>2021-08-28T16:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gmetal.dev/tags/metador/</loc>

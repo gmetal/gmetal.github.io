@@ -7,7 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-    <lastBuildDate>Sat, 28 Aug 2021 16:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/kotlin/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 18 Jan 2022 08:00:00 +0000</lastBuildDate><atom:link href="https://gmetal.dev/tags/kotlin/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Avoid Long Apply in Variable Initialisations</title>
+      <link>https://gmetal.dev/posts/avoid-long-apply-in-variable-init/</link>
+      <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+      
+      <guid>https://gmetal.dev/posts/avoid-long-apply-in-variable-init/</guid>
+      <description>The apply scope function is a very useful Kotlin standard library method for grouping long variable configuration blocks, when no builder is available. It can be used when creating functions that return the instance of the object (in a builder like fashion), like in the following code:
+class MyClass { fun func(): MyClass = apply { // add code here  } } Moreover, it is especially convenient when using older APIs which do not provide a builder.</description>
+    </item>
+    
     <item>
       <title>Using kotest in your Android project</title>
       <link>https://gmetal.dev/posts/using-kotest/</link>

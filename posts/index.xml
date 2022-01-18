@@ -6,8 +6,125 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <copyright>&lt;a href=&#34;https://creativecommons.org/licenses/by-nc/4.0/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CC BY-NC 4.0&lt;/a&gt;</copyright>
-        <lastBuildDate>Wed, 03 Nov 2021 08:01:49 +0000</lastBuildDate>
+        <lastBuildDate>Tue, 18 Jan 2022 08:00:00 +0000</lastBuildDate>
         <atom:link href="https://gmetal.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Avoid Long Apply in Variable Initialisations</title>
+            <link>https://gmetal.dev/posts/avoid-long-apply-in-variable-init/</link>
+            <pubDate>Tue, 18 Jan 2022 08:00:00 +0000</pubDate>
+            
+            <guid>https://gmetal.dev/posts/avoid-long-apply-in-variable-init/</guid>
+            <description>The apply scope function is a very useful Kotlin standard library method for grouping long variable configuration blocks, when no builder is available. It can be used when creating functions that return the instance of the object (in a builder like fashion), like in the following code:
+class MyClass { fun func(): MyClass = apply { // add code here  } } Moreover, it is especially convenient when using older APIs which do not provide a builder.</description>
+            <content type="html"><![CDATA[<p>The <a href="https://kotlinlang.org/docs/scope-functions.html#apply">apply</a> scope function is a very useful Kotlin standard library method for grouping long variable configuration blocks, when no builder is available. It can be used when creating functions that return the instance of the object (in a builder like fashion), like in the following code:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">func</span>(): MyClass = apply {
+    <span style="color:#75715e">// add code here
+</span><span style="color:#75715e"></span>  }
+}
+</code></pre></div><p>Moreover, it is especially convenient when using older APIs which do not provide a builder. For example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span> {
+  <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">func</span>(person: Person, friendList: List&lt;String&gt;) {
+    <span style="color:#66d9ef">val</span> bunde = Bundle().apply {
+      putString(<span style="color:#e6db74">&#34;name&#34;</span>, person.fullName
+      putInt(<span style="color:#e6db74">&#34;age&#34;</span>, person.age)
+      putBoolean(<span style="color:#e6db74">&#34;isActive&#34;</span>, person.isActive)
+      putStringList(<span style="color:#e6db74">&#34;friends&#34;</span>, ArrayList&lt;String&gt;(friendList))
+    }
+  }
+}
+</code></pre></div><p>Thus, it provides a means of creating and initialising a complex object in a <code>val</code> property of a class. In order words, you can do something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span>(person: Person, friendList: List&lt;String&gt;) {
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> myBundle: Bundle = Bundle().apply {
+      putString(<span style="color:#e6db74">&#34;name&#34;</span>, person.fullName
+      putInt(<span style="color:#e6db74">&#34;age&#34;</span>, person.age)
+      putBoolean(<span style="color:#e6db74">&#34;isActive&#34;</span>, person.isActive)
+      putStringList(<span style="color:#e6db74">&#34;friends&#34;</span>, ArrayList&lt;String&gt;(friendList))
+    }
+}
+</code></pre></div><p>However, often in development, when the requirements change and different (although not always) developers update the same piece of code, there is often little attention paid to minor code quality degradation. For example, consider updating the above example with code to add more filtering in the <code>friendsList</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span>(person: Person, friendList: List&lt;String&gt;) {
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> myBundle: Bundle = Bundle().apply {
+      putString(<span style="color:#e6db74">&#34;name&#34;</span>, person.fullName
+      putInt(<span style="color:#e6db74">&#34;age&#34;</span>, person.age)
+      putBoolean(<span style="color:#e6db74">&#34;isActive&#34;</span>, person.isActive)
+      putStringList(
+        <span style="color:#e6db74">&#34;friends&#34;</span>, 
+        friendList.filter { <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">it</span> }
+            .map {
+                <span style="color:#66d9ef">it</span>.split(<span style="color:#e6db74">&#34; &#34;</span>)
+                    .zipWithNext()
+                    .map { pair <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${pair.second}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">${pair.first}</span><span style="color:#e6db74">&#34;</span> }
+            }
+            .flatten()
+            .fold(ArrayList&lt;String&gt;()) { acc, item <span style="color:#f92672">-&gt;</span>
+                acc.add(item)
+                acc
+            }
+      )
+    }
+}
+</code></pre></div><p>Then someone might naively attempt to extract the <code>friendsList</code> filtering into an external method:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span>(person: Person, friendList: List&lt;String&gt;) {
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> myBundle: Bundle = Bundle().apply {
+      putString(<span style="color:#e6db74">&#34;name&#34;</span>, person.fullName
+      putInt(<span style="color:#e6db74">&#34;age&#34;</span>, person.age)
+      putBoolean(<span style="color:#e6db74">&#34;isActive&#34;</span>, person.isActive)
+      filterFriendsList(friendsList)
+    }
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">filterFriendsList</span>(friendList: List&lt;String&gt;) {
+        myBundle.putStringList(
+          <span style="color:#e6db74">&#34;friends&#34;</span>, 
+          friendList.filter { <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">it</span> }
+              .map {
+                  <span style="color:#66d9ef">it</span>.split(<span style="color:#e6db74">&#34; &#34;</span>)
+                      .zipWithNext()
+                      .map { pair <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${pair.second}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">${pair.first}</span><span style="color:#e6db74">&#34;</span> }
+              }
+              .flatten()
+              .fold(ArrayList&lt;String&gt;()) { acc, item <span style="color:#f92672">-&gt;</span>
+                  acc.add(item)
+                  acc
+              }
+      )
+    }
+}
+</code></pre></div><p>Now this method extraction has introduced a very simple <code>NullPointerException</code> bug, one which may surprise you somewhat when running the code. It is certainly non-obvious and easily missed, especially if you&rsquo;ve been on top of the code for a while. Running the above snippet throws a <code>NullPointerException</code> in the following line:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">myBundle.putStringList(
+</code></pre></div><p>The variable <code>myBundle</code> is null. Although at first this may be confusing it has a very simple explanation. Let&rsquo;s focus on this line here:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin">  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> myBundle: Bundle = Bundle().apply {
+</code></pre></div><p>When a new <code>MyClass</code> object is created, the <code>myBundle</code> variable will have to be initialised. This initialisation is achieved by creating a new <code>Bundle</code> object, then running the <code>apply</code> block on the newly created object and then taking the result and assigning it to the <code>myBundle</code> variable. So the code of the <code>filterFriendsList</code> would work as it was written previously, because it was executing in the context of the newly created <code>Bundle</code> object, but cannot work as is without the <code>myBundle</code> instance having been initialised first.</p>
+<p>There are multiple solutions to this problem. Do not forget that it was introduced by adding excessive logic in the variable initialisation, inside the <code>apply</code> block. Therefore the simplest solution is to extract all the initialisation logic in a separate function. For example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-kotlin" data-lang="kotlin"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyClass</span>(person: Person, friendList: List&lt;String&gt;) {
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">val</span> myBundle: Bundle = createMyBundle(person, friendList)
+
+  <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">fun</span> <span style="color:#a6e22e">createMyBundle</span>(person: Person, friendList: List&lt;String&gt;): Bundle {
+      <span style="color:#66d9ef">val</span> bundle = Bundle()
+      bundle.putString(<span style="color:#e6db74">&#34;name&#34;</span>, person.fullName
+      bundle.putInt(<span style="color:#e6db74">&#34;age&#34;</span>, person.age)
+      bundle.putBoolean(<span style="color:#e6db74">&#34;isActive&#34;</span>, person.isActive)
+      bundle.putStringList(
+          <span style="color:#e6db74">&#34;friends&#34;</span>, 
+          friendList.filter { <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">it</span> }
+              .map {
+                  <span style="color:#66d9ef">it</span>.split(<span style="color:#e6db74">&#34; &#34;</span>)
+                      .zipWithNext()
+                      .map { pair <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${pair.second}</span><span style="color:#e6db74">, </span><span style="color:#e6db74">${pair.first}</span><span style="color:#e6db74">&#34;</span> }
+              }
+              .flatten()
+              .fold(ArrayList&lt;String&gt;()) { acc, item <span style="color:#f92672">-&gt;</span>
+                  acc.add(item)
+                  acc
+              }
+      )
+      <span style="color:#66d9ef">return</span> person
+    }
+}
+</code></pre></div><p>Now all the code needed is in a single function, it is clear that it creates a new object instance, and it can be further refactored as needed in the future.</p>
+]]></content>
+        </item>
         
         <item>
             <title>Unit Testing WithTimeout in Coroutines With Kotest</title>
